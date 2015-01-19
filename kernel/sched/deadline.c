@@ -1707,7 +1707,11 @@ static void rq_offline_dl(struct rq *rq)
 	if (rq->dl.overloaded)
 		dl_clear_overload(rq);
 
+<<<<<<< HEAD
 	cpudl_clear(&rq->rd->cpudl, rq->cpu);
+=======
+	cpudl_set(&rq->rd->cpudl, rq->cpu, 0, 0);
+>>>>>>> 2cea7f0... sched/deadline: Modify cpudl::free_cpus to reflect rd->online
 	cpudl_clear_freecpu(&rq->rd->cpudl, rq->cpu);
 }
 
