@@ -31,7 +31,7 @@ static inline int right_child(int i)
 	return (i << 1) + 2;
 }
 
-static void cpudl_heapify_down(struct cpudl *cp, int idx)
+static void cpudl_exchange(struct cpudl *cp, int a, int b)
 {
 	int l, r, largest;
 
