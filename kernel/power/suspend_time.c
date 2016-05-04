@@ -19,11 +19,10 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/seq_file.h>
-#include <linux/syscore_ops.h>
 #include <linux/time.h>
 #include <linux/suspend.h>
 
-static struct timespec suspend_time_before;
+static struct timespec before;
 static unsigned int time_in_suspend_bins[32];
 
 #ifdef CONFIG_DEBUG_FS
@@ -71,21 +70,28 @@ static int __init suspend_time_debug_init(void)
 late_initcall(suspend_time_debug_init);
 #endif
 
-#ifdef CONFIG_SUSPEND_TIME_TIMEKEEPING
+/* FIXME: should be declared in include/linux/timekeeping.h */
+extern ktime_t ktime_get_update_offsets_tick(ktime_t *offs_real,
+						ktime_t *offs_boot,
+						ktime_t *offs_tai);
+
 static int suspend_time_pm_event(struct notifier_block *notifier,
 				unsigned long pm_event, void *unused)
 {
 	struct timespec after;
+	ktime_t mono, real, boot, tail;
+
 	switch (pm_event) {
 	case PM_SUSPEND_PREPARE:
-		getnstimeofday(&suspend_time_before);
+		mono = ktime_get_update_offsets_tick(&real, &boot, &tail);
+		before = ktime_to_timespec(boot);
 		break;
 	case PM_POST_SUSPEND:
-		getnstimeofday(&after);
-		after = timespec_sub(after, suspend_time_before);
+		mono = ktime_get_update_offsets_tick(&real, &boot, &tail);
+		after = timespec_sub(ktime_to_timespec(boot), before);
 		time_in_suspend_bins[fls(after.tv_sec)]++;
-		pr_info("Suspended for %lu.%03lu seconds\n", after.tv_sec,
-			after.tv_nsec / NSEC_PER_MSEC);
+		pr_info("Suspended for %lu.%03lu seconds\n",
+				after.tv_sec, after.tv_nsec / NSEC_PER_MSEC);
 		break;
 	default:
 		break;
@@ -96,52 +102,16 @@ static int suspend_time_pm_event(struct notifier_block *notifier,
 static struct notifier_block suspend_time_pm_notifier_block = {
 	.notifier_call = suspend_time_pm_event,
 };
-#else
-static int suspend_time_syscore_suspend(void)
+
+static int suspend_time_init(void)
 {
-	read_persistent_clock(&suspend_time_before);
-
-	return 0;
-}
-
-static void suspend_time_syscore_resume(void)
-{
-	struct timespec after;
-
-	read_persistent_clock(&after);
-
-	after = timespec_sub(after, suspend_time_before);
-
-	time_in_suspend_bins[fls(after.tv_sec)]++;
-
-	pr_info("Suspended for %lu.%03lu seconds\n", after.tv_sec,
-		after.tv_nsec / NSEC_PER_MSEC);
-}
-
-static struct syscore_ops suspend_time_syscore_ops = {
-	.suspend = suspend_time_syscore_suspend,
-	.resume = suspend_time_syscore_resume,
-};
-#endif
-
-static int suspend_time_syscore_init(void)
-{
-#ifdef CONFIG_SUSPEND_TIME_TIMEKEEPING
 	register_pm_notifier(&suspend_time_pm_notifier_block);
-#else
-	register_syscore_ops(&suspend_time_syscore_ops);
-#endif
-
 	return 0;
 }
 
-static void suspend_time_syscore_exit(void)
+static void suspend_time_exit(void)
 {
-#ifdef CONFIG_SUSPEND_TIME_TIMEKEEPING
 	unregister_pm_notifier(&suspend_time_pm_notifier_block);
-#else
-	unregister_syscore_ops(&suspend_time_syscore_ops);
-#endif
 }
-module_init(suspend_time_syscore_init);
-module_exit(suspend_time_syscore_exit);
+module_init(suspend_time_init);
+module_exit(suspend_time_exit);
