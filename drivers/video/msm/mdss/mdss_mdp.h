@@ -835,7 +835,6 @@ struct mdss_overlay_private {
 	bool allow_kickoff;
 
 	u8 sd_transition_state;
-
 	struct kthread_worker worker;
 	struct kthread_work vsync_work;
 	struct task_struct *thread;
