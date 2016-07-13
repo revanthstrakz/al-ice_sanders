@@ -172,3 +172,5 @@ obj-$(CONFIG_ANDROID)		+= android/
 obj-$(CONFIG_BIF)		+= bif/
 
 obj-$(CONFIG_SENSORS_SSC)	+= sensors/
+
+obj-y += htc_debug/
