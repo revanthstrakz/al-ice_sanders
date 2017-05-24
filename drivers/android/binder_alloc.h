@@ -187,7 +187,7 @@ binder_alloc_get_user_buffer_offset(struct binder_alloc *alloc)
 	 * Returning the old value is ok in this case and
 	 * the transaction will fail.
 	 */
-	return alloc->user_buffer_offset;
+	return READ_ONCE(alloc->user_buffer_offset);
 }
 
 #endif /* _LINUX_BINDER_ALLOC_H */
