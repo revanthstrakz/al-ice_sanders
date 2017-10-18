@@ -58,6 +58,9 @@ static void hb_input_callback(struct work_struct *unused) {
 	if (!mutex_trylock(&hb_lock))
 		return;
 
+	if (hb_data.haptic)
+		set_vibrate(VIB_STRENGTH);
+
 	input_report_key(hb_data.hb_dev, hb_data.current_key, hb_data.key_press);
 	input_sync(hb_data.hb_dev);
 
