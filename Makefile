@@ -407,7 +407,7 @@ KBUILD_CFLAGS   := -Werror -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -mcpu=cortex-a53 -mfpu=crypto-neon-fp-armv8 \
+		   -mcpu=cortex-a53 \
 		   -fmodulo-sched -fmodulo-sched-allow-regmoves \
 		   -std=gnu89
 
