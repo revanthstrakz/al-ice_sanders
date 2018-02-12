@@ -2,6 +2,7 @@
 # Makefile for the MSM specific device drivers.
 #
 
+CFLAGS_usb_bam.o := -Wno-enum-conversion
 ccflags-y += -Isecurity/selinux -Isecurity/selinux/include
 
 obj-$(CONFIG_MSM_BUS_SCALING) += msm_bus/
@@ -26,7 +27,3 @@ obj-$(CONFIG_MSM_AVTIMER) += avtimer.o
 obj-$(CONFIG_MSM_11AD) += msm_11ad/
 obj-$(CONFIG_MSM_MHI_DEV) += mhi_dev/
 obj-$(CONFIG_SSM) += ssm.o
-
-#TODO: remove me b/62058353
-subdir-ccflags-y += \
-	-Wno-enum-conversion
