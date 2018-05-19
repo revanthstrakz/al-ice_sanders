@@ -29,7 +29,7 @@ before_script:
   - git clone --depth=50 --branch=opt-linaro-7.x https://github.com/krasCGQ/aarch64-linux-android $HOME/LINARO/7.x
 
 # Download the Kernel Sources
-  - git clone --depth=50 --branch=treble https://github.com/revanthstrakz/al-ice_sanders  $HOME/SK
+  - git clone --depth=50 --branch=working https://github.com/revanthstrakz/al-ice_sanders  $HOME/SK
   
 # Download the clang Source
   - git clone --depth=50 --branch=master https://github.com/revanthstrakz/Clang clang
