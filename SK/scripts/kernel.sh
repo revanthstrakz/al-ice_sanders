@@ -78,7 +78,7 @@ rm -fv ${IMAGE};
 # if [[ "$@" =~ "clean" ]]; then
     ${MAKE} clean
 # fi
-${MAKE} CC=clang strakz_defconfig
+#${MAKE} CC=clang strakz_defconfig
 
 START=$(date +"%s");
 
@@ -87,7 +87,7 @@ END=$(date +"%s")
 DIFF=$(($END - $START))
 echo -e "Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.";
 
-make CC=clang -j${JOBS} O=out/
+#make CC=clang -j${JOBS} O=out/
 
 echo -e "Copying kernel image";
 cp -v "${IMAGE}" "${ANYKERNEL}/";
